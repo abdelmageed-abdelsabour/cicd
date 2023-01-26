@@ -1,5 +1,3 @@
-@@ -1,437 +1,21 @@
-# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
 commands:
@@ -13,12 +11,9 @@ commands:
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             
             aws cloudformation delete-stack --stack-name=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/2.0/orb-intro/
-orbs:
-  node: circleci/node@4.7
 
             aws cloudformation delete-stack --stack-name=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+
             
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.     
@@ -45,6 +40,7 @@ orbs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+
   install_ansible:
     description: Install Ansible
     steps:
@@ -145,6 +141,7 @@ jobs:
             cd frontend
             npm install
             npm audit fix --audit-level=critical --force
+
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -158,6 +155,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
+
   deploy-infrastructure:
     docker:
       - image: cimg/python:3.10
@@ -268,7 +266,7 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-environment
       - revert-migrations       
-
+                    
   deploy-backend:
     docker:
       - image: cimg/base:stable
@@ -345,7 +343,7 @@ jobs:
       - destroy-environment
       - revert-migrations     
 
-
+    
   cloudfront-update:
     docker:
       - image: cimg/base:stable
@@ -361,6 +359,7 @@ jobs:
               --no-paginate --output text)
             echo "Old Wokflow ID: $OldWorkflowID"
             curl https://kvdb.io/VvUVyM98ADnPH2cg1sBsta/old_workflow_id -d "$OldWorkflowID" 
+
       - run:
           name: Update cloudfront distribution
           command: |
@@ -369,6 +368,7 @@ jobs:
                 --stack-name InitialStack \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
                 --tags Project=Udapeople
+
       - destroy-environment
       - revert-migrations  
 
@@ -385,8 +385,10 @@ jobs:
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"  
+
             export OldWorkflowID=$(curl --insecure https://kvdb.io/VvUVyM98ADnPH2cg1sBsta/old_workflow_id)
             echo OldWorkflowID: ${OldWorkflowID}
+
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               echo "DELETE CONFIRMED"
@@ -396,15 +398,12 @@ jobs:
             else
               echo "can't DELETE"
             fi
+
       - destroy-environment
       - revert-migrations       
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+ 
 workflows:
   default:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-frontend
       - build-backend
@@ -436,10 +435,3 @@ workflows:
       - cleanup:
           requires: [cloudfront-update]
 
-      - node/test:
-          # This is the node version to use for the `cimg/node` tag
-          # Relevant tags can be found on the CircleCI Developer Hub
-          # https://circleci.com/developer/images/image/cimg/node
-          version: '16.10'
-          # If you are using yarn, change the line below from "npm" to "yarn"
-          pkg-manager: npm
