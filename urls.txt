@@ -1,0 +1,9 @@
+arn:aws:s3:::udapeople-6932b62
+
+https://github.com/abdelmageed-abdelsabour/cicd
+
+arn:aws:s3:::udapeople-6932b62
+
+aws:cloudformation:stack-id	arn:aws:cloudformation:us-east-1:741078435287:stack/udapeople-frontend-6932b62/751416e0-9dac-11ed-8f94-0e38bef23a6d
+
+
