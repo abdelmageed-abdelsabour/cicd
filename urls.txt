@@ -1,4 +1,5 @@
-kindly check all the screen shouts and edited pdf presentation 
+kindly check all the screenshouts and edited pdf presentation 
+if still any issue could we setup a remote session or a meeting to check the issue 
 
 arn:aws:s3:::udapeople-6932b62
 
